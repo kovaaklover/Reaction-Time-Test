@@ -1,0 +1,102 @@
+:root {
+  --primary-border: #323232;
+  --primary-bg: #18191C;
+  --hover-bg: #2A2B2E;
+  --active-bg: #2A2B2E;
+  --hover-border: #323232;
+  --text-color: white;
+  --version-border: #323232;
+
+  --font-size-title: 1.4rem;
+  --font-size-button: 1.1rem;
+  --font-size-version: 0.85rem;
+  --font-size-small: 0.9rem;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111316;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+/* Full-width top bar =============================================================================================================================================*/
+#topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: var(--primary-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1000;
+  border-bottom: 1px solid var(--primary-border);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* Title pinned to far left */
+#appTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.title-text {
+  color: var(--text-color);
+  font-size: var(--font-size-title);   /* ← Now variable */
+  font-weight: bold;
+  white-space: nowrap;
+}
+.version-badge {
+  color: var(--text-color);
+  font-size: var(--font-size-version); /* ← Now variable */
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 1px solid var(--version-border);
+  background: var(--primary-bg);       /* Matches top bar */
+}
+
+/* Centered navigation buttons */
+#navButtons {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+#topBar button {
+  color: var(--text-color);
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-border);
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: var(--font-size-button);  /* ← Now variable */
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+#topBar button:hover {
+  background: var(--hover-bg);
+}
+#topBar button.active {
+  background: #5A63EA;
+  font-weight: bold;
+}
+
+#viewContainer {
+  margin-top: 70px;
+  height: calc(100vh - 70px);
+  overflow: hidden;
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reaction Time Tester</title>
+
+  <!-- CSS files -->
+  <link rel="stylesheet" href="./styles/global.css" />
+  <link rel="stylesheet" href="./styles/freeplayVisual.css" />
+  <link rel="stylesheet" href="./styles/freeplaySound.css" />
+  <link rel="stylesheet" href="./styles/testerVisual.css" />
+  <link rel="stylesheet" href="./styles/stats.css" />
+</head>
+<body>
+  <!-- Fixed Top Bar -->
+  <div id="topBar">
+    <div id="appTitle">
+      <div class="title-text">Reaction Time Tester</div>
+      <div class="version-badge">v9.0</div>
+    </div>
+    <div id="navButtons">
+      <button data-view="freeplay-visual" class="active">Freeplay – Visual</button>
+      <button data-view="freeplay-sound">Freeplay – Audio</button>
+      <button data-view="tester-visual">Session – Visual</button>
+      <button data-view="stats">Stats</button>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div id="viewContainer"></div>
+
+  <!-- JS files -->
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+/* ===== MAIN LAYOUT ===== */
+#freeplayLayout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 20px;
+  padding: 20px 10px;              /* matches Freeplay */
+  box-sizing: border-box;
+}
+
+/* ===== SHARED PANEL STYLING — exactly like Freeplay ===== */
+#mainPanel,
+#historyPanel,
+#filtersPanel,
+#dataManagementPanel {
+  display: flex;
+  flex-direction: column;
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-border);
+  border-radius: 2px;
+  padding: 20px;                   /* full 20px all sides — perfect match */
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* ===== LEFT COLUMN: Split panels ===== */
+#leftColumnContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 350px;
+  gap: 20px;
+  height: 100%;
+}
+
+#filtersPanel {
+  flex: 1;
+  min-height: 0;
+}
+
+#dataManagementPanel {
+  flex: 0 0 200px;
+  min-height: 200px;
+}
+
+/* ===== PANEL SIZES ===== */
+#historyPanel {
+  flex: 0 0 350px;
+}
+
+#mainPanel {
+  flex: 1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0px;     /* space between items */
+}
+
+/* ===== PANEL TITLES — exactly like Freeplay ===== */
+#mainPanel h3,
+#historyPanel h3,
+#filtersPanel h3,
+#dataManagementPanel h3 {
+  margin: 0 0 16px 0;
+  font-size: var(--font-size-title);
+  text-align: center;
+  color: var(--text-color);
+}
+
+/* ===== STICKY TITLE IN HISTORY PANEL ===== */
+#historyPanel {
+  position: relative;
+  padding-top: 0;
+}
+
+#historyPanel h3 {
+  position: sticky;
+  top: 0;
+  background: var(--primary-bg);
+  margin: 0 0 16px 0 !important;
+  padding: 20px 20px 10px 20px;
+  z-index: 10;
+}
+
+/* ===== FILTERS PANEL: Controls ===== */
+.stats-label {
+  display: block;
+  font-size: var(--font-size-button);
+  margin: 16px 0 8px 0;
+  color: var(--text-color);
+  opacity: 0.9;
+}
+
+.date-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+#filtersPanel select,
+#filtersPanel input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  background: var(--primary-bg);
+  color: var(--text-color);
+  border: 1px solid var(--primary-border);
+  border-radius: 2px;
+  font-size: var(--font-size-button);
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+#filtersPanel select:hover,
+#filtersPanel input[type="date"]:hover {
+  background: var(--hover-bg);
+}
+
+#filtersPanel select:focus,
+#filtersPanel input[type="date"]:focus {
+  border-color: var(--hover-border);
+  outline: none;
+}
+
+#filtersPanel button {
+  width: 100%;
+  padding: 12px 20px;
+  margin-bottom: 12px;
+  background: var(--primary-bg);
+  color: var(--text-color);
+  border: 1px solid var(--primary-border);
+  border-radius: 2px;
+  font-size: var(--font-size-button);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+#filtersPanel button:hover {
+  background: var(--hover-bg);
+}
+
+/* Checkbox label cursor */
+#removeOutliers + label {
+  cursor: pointer;
+}
+
+/* ===== DATA MANAGEMENT PANEL: Buttons ===== */
+#dataManagementPanel button {
+  width: 100%;
+  padding: 12px 20px;
+  margin-bottom: 12px;
+  background: var(--primary-bg);
+  color: var(--text-color);
+  border: 1px solid var(--primary-border);
+  border-radius: 2px;
+  font-size: var(--font-size-button);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+#dataManagementPanel button:last-child {
+  margin-bottom: 0;
+}
+
+#dataManagementPanel button:hover {
+  background: var(--hover-bg);
+}
+
+/* ===== STATS BOX (Average/Best/Worst) ===== */
+.stats-box {
+  display: flex;
+  justify-content: space-between; /* spreads inner items evenly */
+  gap: 20px;                      /* spacing between each item */
+  width: 100%;                     /* match chart width */
+  border: 1px solid var(--primary-border);
+  border-radius: 5px;
+  padding: 12px;
+  background: var(--primary-bg);
+  box-sizing: border-box;
+}
+
+.stats-item {
+  flex: 1;
+  min-width: 120px;
+  background: var(--hover-bg);
+  border-radius: 2px;
+  padding: 0px 12px 12px 12px;   /* ← Top reduced from 10px to 6px */
+  text-align: center;
+}
+
+/* ===== CHART STYLING ===== */
+#reactionChart,
+#colorAvgChart,
+#hourAvgChart {
+  display: block;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 20px auto 20px auto; /* controlled spacing */
+  display: block;
+  border: 1px solid var(--primary-border);
+  border-radius: 5px;
+  box-sizing: border-box;
+  background: var(--primary-bg);
+}
+
+
+
+/* ===== CUSTOM SCROLLBARS ===== */
+#mainPanel::-webkit-scrollbar,
+#historyPanel::-webkit-scrollbar,
+#filtersPanel::-webkit-scrollbar,
+#dataManagementPanel::-webkit-scrollbar {
+  width: 10px;
+}
+
+#mainPanel::-webkit-scrollbar-track,
+#historyPanel::-webkit-scrollbar-track,
+#filtersPanel::-webkit-scrollbar-track,
+#dataManagementPanel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+#mainPanel::-webkit-scrollbar-thumb,
+#historyPanel::-webkit-scrollbar-thumb,
+#filtersPanel::-webkit-scrollbar-thumb,
+#dataManagementPanel::-webkit-scrollbar-thumb {
+  background: var(--active-bg);
+  border-radius: 10px;
+}
+
+#mainPanel::-webkit-scrollbar-thumb:hover,
+#historyPanel::-webkit-scrollbar-thumb:hover,
+#filtersPanel::-webkit-scrollbar-thumb:hover,
+#dataManagementPanel::-webkit-scrollbar-thumb:hover {
+  background: var(--active-bg);
+}
+

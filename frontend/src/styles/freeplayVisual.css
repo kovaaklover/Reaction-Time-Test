@@ -1,0 +1,165 @@
+#freeplayLayout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 20px;
+  padding: 20px 10px;
+  box-sizing: border-box;
+}
+
+#settingsPanel, #mainPanel, #historyPanel {
+  display: flex;
+  flex-direction: column;
+  background: var(--primary-bg);
+  border: 1px solid var(--primary-border);
+  border-radius: 2px;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+#settingsPanel {
+  flex: 0 0 350px;
+}
+
+#historyPanel {
+  flex: 0 0 350px;
+}
+
+#mainPanel {
+  flex: 1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+#settingsPanel h3, #mainPanel h3, #historyPanel h3 {
+  margin: 0 0 16px 0;
+  font-size: var(--font-size-title);
+  text-align: center;
+  color: var(--text-color);
+}
+
+#settingsPanel label {
+  font-size: var(--font-size-button);
+  margin-bottom: 6px;
+  display: block;
+}
+
+#settingsPanel select {
+  width: 100%;
+  padding: 10px;
+  background: var(--primary-bg);
+  color: var(--text-color);
+  border: 1px solid var(--primary-border);
+  border-radius: 2px;
+  font-size: var(--font-size-button);
+  margin-bottom: 20px;
+  cursor: pointer;
+  outline: none;
+}
+
+#settingsPanel select:focus {
+  border-color: var(--hover-border);
+  box-shadow: 0 0 0 1px var(--hover-border);
+}
+
+#settingsPanel select:hover {
+  background: var(--hover-bg);
+}
+
+#notesInput:focus {
+  outline: none;                    /* Removes the orange/blue glow */
+  border-color: var(--hover-border); /* Optional: match your hover style */
+  box-shadow: 0 0 0 1px var(--hover-border); /* Optional: subtle custom glow */
+}
+
+#mainPanel #targetColorText {
+  font-weight: bold;
+}
+
+#mainPanel #buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+#mainPanel button {
+  font-size: 2vw;
+  padding: 1.5vh 2vw;
+  border: 2px solid var(--primary-border);
+  cursor: pointer;
+  border-radius: 2px;
+  background: var(--primary-bg);
+  color: var(--text-color);
+}
+
+#mainPanel button:hover {
+  background: var(--hover-bg);
+}
+
+#mainPanel button.active {
+  background: var(--active-bg);
+}
+
+/* Stimulus (click target) */
+#mainPanel #stimulus {
+  width: 100%;          /* full width of mainPanel */
+  height: 70%;          /* half height of mainPanel */
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: none !important;  /* prevent fade/animations */
+}
+
+#mainPanel #result {
+  font-size: 2vw;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+}
+
+
+/* Make the title sticky inside the history panel */
+#historyPanel {
+  position: relative; /* Required for sticky to work inside this container */
+  padding-top: 0;
+  /* your existing rules remain */
+}
+
+/* The sticky title */
+#historyPanel h3 {
+  position: sticky;
+  top: 0;                    /* Sticks to the top of the panel */
+  background: var(--primary-bg); /* Important: cover the content scrolling underneath */
+  margin: 0 0 16px 0 !important; /* Override any bottom margin if needed */
+  padding: 20px 20px 10px 20px;  /* Full top padding + horizontal + slightly more bottom */
+  z-index: 10;               /* Ensure it stays on top of scrolling content */
+}
+
+/* ===== CUSTOM SCROLLBARS – WebKit (Chrome, Edge, Safari) ===== */
+#settingsPanel::-webkit-scrollbar,
+#mainPanel::-webkit-scrollbar,
+#historyPanel::-webkit-scrollbar {
+  width: 10px;           /* Thin but usable */
+}
+
+#settingsPanel::-webkit-scrollbar-track,
+#mainPanel::-webkit-scrollbar-track,
+#historyPanel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);     /* Dark semi-transparent track */
+  border-radius: 10px;
+}
+
+#settingsPanel::-webkit-scrollbar-thumb,
+#mainPanel::-webkit-scrollbar-thumb,
+#historyPanel::-webkit-scrollbar-thumb {
+  background: var(--active-bg); /* Use your existing border color */
+  border-radius: 10px;
+}
+
+#settingsPanel::-webkit-scrollbar-thumb:hover,
+#mainPanel::-webkit-scrollbar-thumb:hover,
+#historyPanel::-webkit-scrollbar-thumb:hover {
+  background: var(--active-bg); /* Brighter on hover */
+}
