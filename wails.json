@@ -2,7 +2,6 @@
   "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "ReactionTimeTester",
   "outputfilename": "Reaction Time Tester",
-  "icon": "build/appicon.ico",
   "frontend:dir": "frontend",
   "author": {
     "name": "Your Name",
