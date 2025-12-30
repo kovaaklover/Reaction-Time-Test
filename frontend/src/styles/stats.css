@@ -99,6 +99,10 @@
   gap: 10px;
 }
 
+#filtersPanel label {
+  font-size: var(--font-size-button);
+}
+
 #filtersPanel select,
 #filtersPanel input[type="date"] {
   width: 100%;
@@ -211,7 +215,8 @@
 /* ===== CHART STYLING ===== */
 #reactionChart,
 #colorAvgChart,
-#hourAvgChart {
+#hourAvgChart,
+#histogramChart {
   display: block;
   width: 100% !important;
   max-width: none !important;

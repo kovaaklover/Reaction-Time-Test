@@ -2,6 +2,7 @@
 let reactionChart = null; // Global to hold Chart.js instance
 let colorAvgChart = null;
 let hourAvgChart = null;
+let histogramChart = null;
 // This function builds the “Statistics” screen and sets up the stats view
 function renderStats(container, sessionHistory) {
     container.innerHTML = `
@@ -82,6 +83,8 @@ function renderStats(container, sessionHistory) {
 
         <canvas id="colorAvgChart"></canvas>
         <canvas id="hourAvgChart"></canvas>
+        <canvas id="histogramChart"></canvas>
+        
 
 
 
@@ -274,6 +277,9 @@ function setupStats(originalHistory) {
             colorAvgChart.destroy();
         if (hourAvgChart)
             hourAvgChart.destroy();
+        if (histogramChart)
+            histogramChart.destroy();
+
         let datasets = [];
         let labels = [];
         const view = graphView.value;
@@ -374,7 +380,9 @@ function setupStats(originalHistory) {
                         grid: { color: '#212121' }
                     },
                     y: {
+                        reverse: true,
                         ticks: {
+                            
                             color: '#f0f0f0',
                             font: {
                                 size: 16
@@ -400,6 +408,11 @@ function setupStats(originalHistory) {
             const vals = stimulusMap[color];
             return vals.reduce((a, b) => a + b, 0) / vals.length;
         });
+
+        const Lower_25 = stimulusLabels.map(color => percentile(stimulusMap[color], 0.25));
+        const Upper_75 = stimulusLabels.map(color => percentile(stimulusMap[color], 0.75));
+        const mid50 = stimulusLabels.map(color => percentile(stimulusMap[color], 0.50));
+
         // AVERAGE BY HOUR OF THE DAY
         // AVERAGE, MEDIAN, LOWER & UPPER QUARTILES BY HOUR
         const hourMap = {};
@@ -428,17 +441,56 @@ function setupStats(originalHistory) {
         const hourLower25 = hourLabels.map(h => percentile(hourMap[+h], 0.25));
         const hourMedian = hourLabels.map(h => percentile(hourMap[+h], 0.5));
         const hourUpper75 = hourLabels.map(h => percentile(hourMap[+h], 0.75));
+
+        function withAlpha(color, alpha = 0.2) {
+            // Create a temporary canvas to convert any color to RGB
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, 1, 1);
+            const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+
+        // Floating IQR data for the chart
+        const floatingIQRData = stimulusLabels.map((color, i) => [
+            Lower_25[i],
+            Upper_75[i]
+        ]);
+
+
+
+
         // Render Stimulus Color Chart
         colorAvgChart = new window.Chart(document.getElementById('colorAvgChart'), {
             type: 'bar',
             data: {
                 labels: stimulusLabels,
                 datasets: [{
-                        data: stimulusAverages,
-                        backgroundColor: stimulusLabels.map(c => c),
-                        borderColor: 'black', // <-- black borders
-                        borderWidth: 1 // <-- thickness of borders
-                    }]
+                        label: '25th-75th Percentile Range',
+                        data: floatingIQRData,
+                        borderColor: stimulusLabels.map(c => c),
+                        backgroundColor: stimulusLabels.map(c => withAlpha(c, 0.6)),
+                        borderWidth: 3,
+                        borderRadius: 5,
+                        barPercentage: 0.5,
+                        categoryPercentage: 0.8,
+                        borderSkipped: false
+                    },
+                    // 2. Average/Median as prominent white dots
+                    {
+                    label: 'Median',
+                    data: mid50,  // or stimulusAverages if you prefer mean
+                    type: 'scatter',
+                    borderColor: stimulusLabels.map(c => c),
+                    borderWidth: 6,
+                    pointRadius: 3,                        // controls width of the rectangle
+                    pointHoverRadius: 16,
+                    }
+                    
+                
+                ]
             },
             options: {
                 responsive: true,
@@ -449,7 +501,7 @@ function setupStats(originalHistory) {
                 plugins: {
                     title: {
                         display: true,
-                        text: '  Average Reaction Times (ms) by Stimulus Color',
+                        text: '  Reaction Times (Q1, Median, Q3) by Stimulus Color',
                         color: 'white',
                         align: 'start',
                         fullWidth: true,
@@ -462,17 +514,21 @@ function setupStats(originalHistory) {
                 },
                 scales: {
                     y: {
+                        reverse: true,
                         ticks: { color: '#f0f0f0', font: { size: 16 } },
+                        
                         grid: { color: '#212121' },
                         beginAtZero: false // disables forcing y-axis to start at 0
                     },
                     x: {
                         ticks: { color: '#f0f0f0', font: { size: 14 } },
-                        grid: { display: false }
+                        grid: { display: false },
+                        //grid: { color: '#212121' },
                     }
                 }
             }
         });
+
         // TIME OF DAY CHART
         hourAvgChart = new window.Chart(document.getElementById('hourAvgChart'), {
             type: 'line',
@@ -535,33 +591,144 @@ function setupStats(originalHistory) {
                     }
                 },
                 scales: {
-                x: {
-                    ticks: {
-                    color: '#f0f0f0',
-                    font: {
-                        size: 14   // ← Now this works!
+                    x: {
+                        ticks: {
+                        color: '#f0f0f0',
+                        font: {
+                            size: 14   // ← Now this works!
+                        },
+                        maxRotation: 0,
+                        minRotation: 0
+                        },
+                        grid: {
+                        color: '#212121'
+                        }
                     },
-                    maxRotation: 0,
-                    minRotation: 0
-                    },
-                    grid: {
-                    color: '#212121'
+                    y: {
+                        reverse: true,
+                        ticks: {
+                        color: '#f0f0f0',
+                        font: {
+                            size: 16   // ← Now this works!
+                        }
+                        },
+                        grid: {
+                        color: '#212121'
+                        }
                     }
-                },
-                y: {
-                    ticks: {
-                    color: '#f0f0f0',
-                    font: {
-                        size: 16   // ← Now this works!
-                    }
-                    },
-                    grid: {
-                    color: '#212121'
-                    }
-                }
                 }
             }
         });
+
+        // HISTOGRAM CHART - Distribution of all reaction times
+        // Collect ALL reaction times from all entries
+        const allReactionTimes = [];
+        dataForGraphAndStats.forEach(entry => {
+            if (entry.results && Array.isArray(entry.results)) {
+                allReactionTimes.push(...entry.results);
+            }
+        });
+
+        // Sort them (needed for nice binning)
+        allReactionTimes.sort((a, b) => a - b);
+
+        // --- Compute bins ---
+        const binSize = 5;  // each bin covers 5 ms
+        const minRT = Math.floor(Math.min(...allReactionTimes) / binSize) * binSize;
+        const maxRT = Math.ceil(Math.max(...allReactionTimes) / binSize) * binSize;
+        const binCount = Math.ceil((maxRT - minRT) / binSize);
+
+        // Create bins array and labels
+        const bins = Array(binCount).fill(0);
+        const labelsa = [];
+        for (let i = 0; i < binCount; i++) {
+            const start = minRT + i * binSize;
+            const end = start + binSize;
+            labelsa.push(`${start}`);
+        }
+
+        // Count values in each bin
+        for (const rt of allReactionTimes) {
+            let binIndex = Math.floor((rt - minRT) / binSize);
+            if (binIndex >= binCount) binIndex = binCount - 1; // edge case for max value
+            bins[binIndex]++;
+        }
+
+
+        const ctx = document.getElementById('histogramChart').getContext('2d');
+
+        // Create gradient: top = solid, bottom = transparent
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0, 'rgba(99, 101, 233, 0.7)');
+        gradient.addColorStop(1, 'rgba(99, 101, 233, 0.2)');
+
+        // --- Render the histogram --
+        histogramChart  = new window.Chart(document.getElementById('histogramChart'), {
+            type: 'line', // <-- change to line
+            data: {
+                labels: labelsa,
+                datasets: [{
+                    label: 'Number of Trials',
+                    data: bins,
+                    backgroundColor: gradient, // fill color under the line
+                    borderColor: '#6365E9',       // line color
+                    borderWidth: 3,
+                    fill: true,           // <-- this makes it an area chart
+                    tension: 0.25,        // smooth curve, optional
+                    pointRadius: 0,       // optional: size of dots
+                    pointBackgroundColor: 'rgba(50,150,255,1)',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,   // ← Keep this
+                aspectRatio: 4,              // ← Adjust this value (higher = taller, lower = wider)
+                devicePixelRatio: window.devicePixelRatio,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: ' Reaction Times (ms) Distribution (All Trials)',
+                        color: 'white',
+                        font: { size: 20 },
+                        align: 'start',
+                        fullWidth: true,
+                        padding: { top: 10, bottom: 10 }
+                    },
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `Count: ${context.parsed.y} trials`
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#f0f0f0', font: { size: 16 } },
+                        grid: { color: '#212121' },
+                        title: {
+                            display: false,
+                            text: 'Reaction Time (ms)',
+                            color: '#f0f0f0'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { 
+                            color: '#f0f0f0', 
+                            font: { size: 16 },
+                            stepSize: Math.max(1, Math.round(Math.max(...bins) / 10))
+                        },
+                        grid: { color: '#212121' },
+                        title: {
+                            display: false,
+                            text: 'Number of Trials',
+                            color: '#f0f0f0'
+                        }
+                    }
+                }
+            }
+        });
+
     };
     // Helper to assign colors by test type
     function getColorForType(type) {
