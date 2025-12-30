@@ -37,16 +37,17 @@ function renderStats(container, sessionHistory) {
             <option value="1">Last 1</option>
             <option value="3">Last 3</option>
             <option value="5">Last 5</option>
+            <option value="9">Last 9 (1 Complete Session)</option>
             <option value="10">Last 10</option>
             <option value="15">Last 15</option>
             <option value="25">Last 25</option>
-            <option value="45">Last 45</option>
+            <option value="27">Last 27 (3 Complete Sessions)</option>
+            <option value="45">Last 45 (5 Complete Sessions)</option>
             <option value="50">Last 50</option>
-            <option value="90">Last 90</option>
+            <option value="90">Last 90 (10 Complete Sessions)</option>
             <option value="100">Last 100</option>
-            <option value="135">Last 135</option>
-            <option value="225">Last 225</option>
-            <option value="450">Last 450</option>
+            <option value="225">Last 225 (25 Complete Sessions)</option>
+            <option value="450">Last 450 (50 Complete Sessions)</option>
           </select>
 
           <label class="stats-label">Date Range</label>
@@ -162,13 +163,20 @@ function setupStats(originalHistory) {
         }
         // Sort chronologically (oldest first for plotting)
         let sortedChronological = [...filtered].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-        // === NEW: Outlier filtering per test type ===
+
+        // === NOW apply "Show Last N" before outliers ===
         let dataForGraphAndStats = sortedChronological;
+        if (showLast.value !== 'all') {
+            const N = parseInt(showLast.value);
+            dataForGraphAndStats = dataForGraphAndStats.slice(-N);
+        }
+        
+        // === NEW: Outlier filtering per test type ===
         if (removeOutliers.checked) {
             const typeStats = {};
             const typeGroups = {};
             // Group results by type
-            sortedChronological.forEach(entry => {
+            dataForGraphAndStats.forEach(entry => {
                 if (!typeGroups[entry.type])
                     typeGroups[entry.type] = [];
                 typeGroups[entry.type].push(...entry.results);
@@ -189,18 +197,16 @@ function setupStats(originalHistory) {
             }
             ;
             // Filter entries: remove outlier trials per type
-            dataForGraphAndStats = sortedChronological.map(entry => {
+            dataForGraphAndStats = dataForGraphAndStats.map(entry => {
                 const { median, std } = typeStats[entry.type] || { median: 0, std: 0 };
                 const threshold = 0.5 * std;
                 const filteredTrials = entry.results.filter(rt => rt >= median - threshold && rt <= median + threshold);
                 return { ...entry, results: filteredTrials };
             }).filter(entry => entry.results.length > 0);
         }
-        // === NOW apply "Show Last N" after outliers ===
-        if (showLast.value !== 'all') {
-            const N = parseInt(showLast.value);
-            dataForGraphAndStats = dataForGraphAndStats.slice(-N);
-        }
+
+
+
         // Empty state
         if (dataForGraphAndStats.length === 0) {
             statsSummary.innerHTML = '<p style="text-align: center; opacity: 0.7;">No sessions match the current filters.</p>';
