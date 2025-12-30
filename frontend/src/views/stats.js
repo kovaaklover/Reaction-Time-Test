@@ -598,7 +598,7 @@ function setupStats(originalHistory) {
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                aspectRatio: 3,
+                aspectRatio: 4,
                 devicePixelRatio: window.devicePixelRatio,
 
                 plugins: {

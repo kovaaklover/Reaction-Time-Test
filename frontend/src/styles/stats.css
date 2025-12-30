@@ -192,6 +192,8 @@
   width: 100%;
   gap: 40px;
   justify-content: space-between; /* spreads items evenly */
+  margin-bottom: 7.5px; 
+  margin-top: 7.5px; 
 }
 
 .stats-item {
@@ -216,6 +218,8 @@
   color: var(--text-primary);
   line-height: 1.2;
   margin-bottom: 7px; 
+  margin-left: 5px;          /* minimum left margin */
+  margin-right: 5px;         /* minimum right margin */
 }
 
 /* ===== CHART STYLING ===== */
@@ -226,7 +230,7 @@
   display: block;
   width: 100% !important;
   max-width: none !important;
-  margin: 20px auto 20px auto; /* controlled spacing */
+  margin: 7.5px auto 7.5px auto; /* controlled spacing */
   display: block;
   border: 1px solid var(--primary-border);
   border-radius: 5px;
