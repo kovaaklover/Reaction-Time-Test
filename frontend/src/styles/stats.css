@@ -52,6 +52,10 @@
   align-items: center;
   justify-content: flex-start;
   gap: 0px;     /* space between items */
+  padding-left: 15px;       /* 80px space inside on the left */
+  padding-right: 15px;       /* 80px space inside on the left */
+  padding-bottom: 0px;       /* 80px space inside on the left */
+  padding-top: 15px;       /* 80px space inside on the left */
 }
 
 /* ===== PANEL TITLES — exactly like Freeplay ===== */
@@ -168,26 +172,40 @@
   background: var(--hover-bg);
 }
 
-/* ===== STATS BOX (Average/Best/Worst) ===== */
+#statsSummary {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .stats-box {
   display: flex;
-  justify-content: space-between; /* spreads inner items evenly */
-  gap: 20px;                      /* spacing between each item */
-  width: 100%;                     /* match chart width */
-  border: 1px solid var(--primary-border);
-  border-radius: 5px;
-  padding: 12px;
-  background: var(--primary-bg);
-  box-sizing: border-box;
+  width: 100%;
+  gap: 40px;
+  justify-content: space-between; /* spreads items evenly */
 }
 
 .stats-item {
   flex: 1;
-  min-width: 120px;
-  background: var(--hover-bg);
-  border-radius: 2px;
-  padding: 0px 12px 12px 12px;   /* ← Top reduced from 10px to 6px */
   text-align: center;
+  padding: 5px 0px;
+  border: 1px solid var(--primary-border);
+  background: var(--primary-bg);
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.stats-label {
+  font-size: 1rem;        /* small label */
+  color: var(--text-secondary);  /* optional: slightly dimmer color */
+  margin-bottom: 7px;        /* small spacing between label and value */
+  margin-top: 7px; 
+}
+
+.stats-value {
+  font-size: 1.25rem;        /* big value — adjust as needed */
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 7px; 
 }
 
 /* ===== CHART STYLING ===== */

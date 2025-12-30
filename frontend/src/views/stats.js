@@ -33,11 +33,19 @@ function renderStats(container, sessionHistory) {
           <label class="stats-label">Show Last X Sessions</label>
           <select id="showLast">
             <option value="all">All</option>
+            <option value="1">Last 1</option>
+            <option value="3">Last 3</option>
             <option value="5">Last 5</option>
             <option value="10">Last 10</option>
+            <option value="15">Last 15</option>
             <option value="25">Last 25</option>
+            <option value="45">Last 45</option>
             <option value="50">Last 50</option>
+            <option value="90">Last 90</option>
             <option value="100">Last 100</option>
+            <option value="135">Last 135</option>
+            <option value="225">Last 225</option>
+            <option value="450">Last 450</option>
           </select>
 
           <label class="stats-label">Date Range</label>
