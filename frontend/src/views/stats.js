@@ -519,7 +519,7 @@ function setupStats(originalHistory) {
             options: {
                 responsive: true,
                 maintainAspectRatio: true,   // ← Keep this
-                aspectRatio: 4,              // ← Adjust this value (higher = taller, lower = wider)
+                aspectRatio: 3,              // ← Adjust this value (higher = taller, lower = wider)
                 devicePixelRatio: window.devicePixelRatio,
 
                 plugins: {
@@ -598,7 +598,7 @@ function setupStats(originalHistory) {
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                aspectRatio: 4,
+                aspectRatio: 3,
                 devicePixelRatio: window.devicePixelRatio,
 
                 plugins: {
@@ -717,7 +717,7 @@ function setupStats(originalHistory) {
             options: {
                 responsive: true,
                 maintainAspectRatio: true,   // ← Keep this
-                aspectRatio: 4,              // ← Adjust this value (higher = taller, lower = wider)
+                aspectRatio: 3,              // ← Adjust this value (higher = taller, lower = wider)
                 devicePixelRatio: window.devicePixelRatio,
                 plugins: {
                     title: {

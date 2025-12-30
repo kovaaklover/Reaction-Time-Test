@@ -190,7 +190,7 @@
 .stats-box {
   display: flex;
   width: 100%;
-  gap: 40px;
+  gap: 15px;
   justify-content: space-between; /* spreads items evenly */
   margin-bottom: 7.5px; 
   margin-top: 7.5px; 
@@ -214,12 +214,14 @@
 }
 
 .stats-value {
-  font-size: 1.25rem;        /* big value — adjust as needed */
+
+  font-size: 1.15rem; /* min, preferred, max */
   color: var(--text-primary);
   line-height: 1.2;
   margin-bottom: 7px; 
   margin-left: 5px;          /* minimum left margin */
   margin-right: 5px;         /* minimum right margin */
+  white-space: nowrap;
 }
 
 /* ===== CHART STYLING ===== */
