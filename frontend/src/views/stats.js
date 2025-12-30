@@ -136,6 +136,9 @@ function setupStats(originalHistory) {
     const updateDisplay = () => {
 
         let filtered = [...originalHistory];
+
+        filtered = filtered.filter(e => e.results.every(r => r <= 500));
+        
         // Filter by type
         if (filterType.value !== 'all') {
             filtered = filtered.filter(e => e.type === filterType.value);
