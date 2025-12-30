@@ -202,8 +202,9 @@ function setupReactionTest(sessionHistory) {
       Results: ${entry.results.map(r => r.toFixed(1)).join(', ')} ms<br>
       <strong>Average: ${avg.toFixed(1)} ms</strong>
     `;
+        //const hr = document.createElement('hr');
         historyContent.insertBefore(div, historyContent.firstChild);
-        historyContent.insertBefore(hr, div);
+        //historyContent.insertBefore(hr, div);
     }
 }
 
