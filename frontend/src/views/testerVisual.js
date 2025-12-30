@@ -6,6 +6,7 @@ function renderTesterVisual(container, sessionHistory) {
         <h3>Explained</h3>
 
         <label>Background Color: White</label>
+        <label>Test Count: 9</label>
         <label>Stimulus Colors: All 9 (auto-cycled)</label>
         <label>Trials per Color: 5</label>
         <label>Min Delay: 1 second</label>
@@ -187,10 +188,11 @@ function setupReactionTest(sessionHistory) {
     function addHistoryEntry(entry) {
         const historyContent = document.getElementById('historyContent');
         const div = document.createElement('div');
-        div.style.marginBottom = '16px';
+        div.style.marginBottom = '15px';
         div.style.padding = '12px';
-        div.style.background = '#2A2B2E';
-        div.style.borderRadius = '8px';
+        div.style.background = '#18191C';
+        div.style.border = '1px solid #323232';
+        div.style.borderRadius = '5px';
         const avg = entry.results.reduce((a, b) => a + b, 0) / entry.results.length || 0;
         div.innerHTML = `
       <strong>Session Visual – ${entry.stimulusColor.charAt(0).toUpperCase() + entry.stimulusColor.slice(1)}</strong><br>
@@ -200,8 +202,6 @@ function setupReactionTest(sessionHistory) {
       Results: ${entry.results.map(r => r.toFixed(1)).join(', ')} ms<br>
       <strong>Average: ${avg.toFixed(1)} ms</strong>
     `;
-        const hr = document.createElement('hr');
-        hr.style.borderColor = '#2A2B2E';
         historyContent.insertBefore(div, historyContent.firstChild);
         historyContent.insertBefore(hr, div);
     }

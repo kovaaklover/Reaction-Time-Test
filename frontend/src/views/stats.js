@@ -15,9 +15,9 @@ function renderStats(container, sessionHistory) {
           <h3>Filters</h3>
 
           <!-- No inner .stats-section-box — everything direct and plain -->
-          <label class="stats-label">Test Type</label>
+          <label class="stats-label">Type</label>
           <select id="filterType">
-            <option value="all">All Tests</option>
+            <option value="all">All</option>
             <option value="Freeplay Visual">Freeplay Visual</option>
             <option value="Freeplay Audio">Freeplay Audio</option>
             <option value="Session Visual">Session Visual</option>
@@ -25,13 +25,13 @@ function renderStats(container, sessionHistory) {
 
           <label class="stats-label">Graph View</label>
           <select id="graphView">
-            <option value="all">All Trials</option>
-            <option value="session">By Session (avg)</option>
+            <option value="all">By Trial</option>
+            <option value="session">By Test (avg)</option>
             <option value="day">By Day (avg)</option>
             <option value="week">By Week (avg)</option>
           </select>
 
-          <label class="stats-label">Show Last X Sessions</label>
+          <label class="stats-label">Show Last X Tests</label>
           <select id="showLast">
             <option value="all">All</option>
             <option value="1">Last 1</option>
@@ -91,7 +91,7 @@ function renderStats(container, sessionHistory) {
       </div>
 
       <div id="historyPanel">
-        <h3>Session History</h3>
+        <h3>Test History</h3>
         <div id="historyContent"></div>
       </div>
     </div>
@@ -134,20 +134,28 @@ function setupStats(originalHistory) {
     const removeOutliers = document.getElementById('removeOutliers');
     const resetBtn = document.getElementById('resetFiltersBtn');
     const updateDisplay = () => {
+
         let filtered = [...originalHistory];
         // Filter by type
         if (filterType.value !== 'all') {
             filtered = filtered.filter(e => e.type === filterType.value);
         }
         // Filter by date range
-        if (filterFrom.value) {
-            const fromDate = new Date(filterFrom.value);
-            filtered = filtered.filter(e => new Date(e.timestamp) >= fromDate);
+        function parseLocalDate(dateString) {
+        const [y, m, d] = dateString.split('-');
+        return new Date(y, m - 1, d); // local midnight
         }
+
+        if (filterFrom.value) {
+        const fromDate = parseLocalDate(filterFrom.value);
+        fromDate.setHours(0, 0, 0, 0);   // start of day
+        filtered = filtered.filter(e => new Date(e.timestamp) >= fromDate);
+        }
+
         if (filterTo.value) {
-            const toDate = new Date(filterTo.value);
-            toDate.setHours(23, 59, 59, 999);
-            filtered = filtered.filter(e => new Date(e.timestamp) <= toDate);
+        const toDate = parseLocalDate(filterTo.value);
+        toDate.setHours(23, 59, 59, 999); // end of day
+        filtered = filtered.filter(e => new Date(e.timestamp) <= toDate);
         }
         // Sort chronologically (oldest first for plotting)
         let sortedChronological = [...filtered].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
@@ -269,7 +277,6 @@ function setupStats(originalHistory) {
         const sortedReverse = [...dataForGraphAndStats].reverse();
         historyContent.innerHTML = sortedReverse.map(entry => renderHistoryEntry(entry)).join('');
         // Graph uses filteredResults → change to dataForGraphAndStats
-        let filteredResults = dataForGraphAndStats; // ← rename or just use dataForGraphAndStats below
         // === Plot the graph ===
         if (reactionChart)
             reactionChart.destroy();
@@ -301,12 +308,17 @@ function setupStats(originalHistory) {
                 let key = '';
                 if (view === 'session')
                     key = entry.timestamp;
-                if (view === 'day')
-                    key = entryDate.toISOString().slice(0, 10);
+                if (view === 'day') {
+                    const year = entryDate.getFullYear();
+                    const month = String(entryDate.getMonth() + 1).padStart(2, '0'); // month is 0-indexed
+                    const day = String(entryDate.getDate()).padStart(2, '0');
+                    key = `${year}-${month}-${day}`; // local date string
+                }
                 if (view === 'week') {
-                    const weekStart = new Date(entryDate);
-                    weekStart.setDate(entryDate.getDate() - entryDate.getDay());
-                    key = weekStart.toISOString().slice(0, 10);
+                    const wsYear = weekStart.getFullYear();
+                    const wsMonth = String(weekStart.getMonth() + 1).padStart(2, '0');
+                    const wsDay = String(weekStart.getDate()).padStart(2, '0');
+                    key = `${wsYear}-${wsMonth}-${wsDay}`;
                 }
                 if (!groups[key]) {
                     groups[key] = { times: [], type: entry.type, date: entryDate };
@@ -317,9 +329,11 @@ function setupStats(originalHistory) {
                 if (!grouped[group.type])
                     grouped[group.type] = [];
                 const avg = group.times.reduce((a, b) => a + b, 0) / group.times.length;
-                grouped[group.type].push({ x: grouped[group.type].length, y: avg });
+                grouped[group.type].push({ x: grouped[group.type].length+1, y: avg });
             });
         }
+
+        // MAIN REACTION TIME CHART
         reactionChart = new window.Chart(chartCanvas, {
             type: 'scatter',
             data: {
@@ -341,23 +355,24 @@ function setupStats(originalHistory) {
                 plugins: {
                     legend: {
                         display: true,
-                        labels: { color: 'white', font: { size: 16 } }
+                        labels: { color: 'white', font: { size: 16 }},
                     },
                     title: {
                         display: true,
-                        text: '  Reaction Times (ms)',
+                        text: '   Reaction Times (ms)',
                         color: 'white',
                         align: 'start',
                         fullWidth: true,
                         font: { size: 20 },
+                        padding: { top: 10, bottom: 0 }
                     },
                 },
                 scales: {
                     x: {
                         title: {
                             display: true,
-                            text: view === 'all' ? 'Trial Number' :
-                                view === 'session' ? 'Session' :
+                            text: view === 'all' ? 'Trial' :
+                                view === 'session' ? 'Test' :
                                     view === 'day' ? 'Day' :
                                         view === 'week' ? 'Week' : 'Time Period',
                             color: '#f0f0f0',
@@ -501,12 +516,12 @@ function setupStats(originalHistory) {
                 plugins: {
                     title: {
                         display: true,
-                        text: '  Reaction Times (Q1, Median, Q3) by Stimulus Color',
+                        text: '   Reaction Times (Q1, Median, Q3) by Stimulus Color',
                         color: 'white',
                         align: 'start',
                         fullWidth: true,
                         font: { size: 20 },
-                        padding: { top: 10, bottom: 40 }
+                        padding: { top: 10, bottom: 30 }
                     },
                     legend: {
                         display: false
@@ -580,12 +595,12 @@ function setupStats(originalHistory) {
                 plugins: {
                     title: {
                         display: true,
-                        text: '  Reaction Times (ms) by Hour of Day',
+                        text: '   Reaction Times (ms) by Hour of Day',
                         color: 'white',
                         align: 'start',
                         fullWidth: true,
                         font: { size: 20 },
-                        padding: { top: 10, bottom: 10 }
+                        padding: { top: 10, bottom: 0 }
                     },
                     legend: { labels: { color: 'white', font: { size: 16 } }
                     }
@@ -633,7 +648,7 @@ function setupStats(originalHistory) {
         allReactionTimes.sort((a, b) => a - b);
 
         // --- Compute bins ---
-        const binSize = 5;  // each bin covers 5 ms
+        const binSize = 2;  // each bin covers 5 ms
         const minRT = Math.floor(Math.min(...allReactionTimes) / binSize) * binSize;
         const maxRT = Math.ceil(Math.max(...allReactionTimes) / binSize) * binSize;
         const binCount = Math.ceil((maxRT - minRT) / binSize);
@@ -654,6 +669,17 @@ function setupStats(originalHistory) {
             bins[binIndex]++;
         }
 
+        const maxBin = Math.max(...bins);
+        const threshold = maxBin / 6;
+        const filteredBins = [];
+        const filteredLabels = [];
+
+        for (let i = 0; i < bins.length; i++) {
+            if (bins[i] >= threshold) {
+                filteredBins.push(bins[i]);
+                filteredLabels.push(labelsa[i]);
+            }
+        }
 
         const ctx = document.getElementById('histogramChart').getContext('2d');
 
@@ -666,10 +692,10 @@ function setupStats(originalHistory) {
         histogramChart  = new window.Chart(document.getElementById('histogramChart'), {
             type: 'line', // <-- change to line
             data: {
-                labels: labelsa,
+                labels: filteredLabels,
                 datasets: [{
                     label: 'Number of Trials',
-                    data: bins,
+                    data: filteredBins,
                     backgroundColor: gradient, // fill color under the line
                     borderColor: '#6365E9',       // line color
                     borderWidth: 3,
@@ -687,12 +713,12 @@ function setupStats(originalHistory) {
                 plugins: {
                     title: {
                         display: true,
-                        text: ' Reaction Times (ms) Distribution (All Trials)',
+                        text: '   Reaction Times (ms) Distribution for All Trials',
                         color: 'white',
                         font: { size: 20 },
                         align: 'start',
                         fullWidth: true,
-                        padding: { top: 10, bottom: 10 }
+                        padding: { top: 10, bottom: 30 }
                     },
                     legend: { display: false },
                     tooltip: {
@@ -703,7 +729,7 @@ function setupStats(originalHistory) {
                 },
                 scales: {
                     x: {
-                        ticks: { color: '#f0f0f0', font: { size: 16 } },
+                        ticks: { color: '#f0f0f0', font: { size: 14 } },
                         grid: { color: '#212121' },
                         title: {
                             display: false,
@@ -713,6 +739,7 @@ function setupStats(originalHistory) {
                     },
                     y: {
                         beginAtZero: true,
+                        max: Math.max(...bins) + 1,
                         ticks: { 
                             color: '#f0f0f0', 
                             font: { size: 16 },
@@ -826,14 +853,19 @@ function renderHistoryEntry(entry) {
         details = '<br>';
     }
     return `
-    <div style="margin-bottom:16px;padding:12px;background:#2A2B2E;border-radius:8px;">
-      <strong>${entry.type}</strong><br>
-      ${entry.timestamp}<br>
-      ${details}
-      Results (ms): ${resultsList}<br>
-      <strong>Average: ${avg} ms</strong>
+    <div style="
+        margin-bottom: 15px;
+        padding: 12px;
+        background-color: #18191C;      /* inside of box */
+        border: 1px solid #323232;      /* 1px border around box */
+        border-radius: 5px;
+    ">
+    <strong>${entry.type}</strong><br>
+    ${entry.timestamp}<br>
+    ${details}
+    Results (ms): ${resultsList}<br>
+    <strong>Average: ${avg} ms</strong>
     </div>
-    <hr style="border:none;border-top:1px solid #2A2B2E;margin:8px 0;">
   `.trim();
 }
 

@@ -30,11 +30,17 @@
   flex: 0 0 350px;
   gap: 20px;
   height: 100%;
+  max-width: 350px;   /* 👈 cap the width */
 }
 
 #filtersPanel {
   flex: 1;
   min-height: 0;
+}
+
+
+.date-grid input[type="date"] {
+  max-width: 150px;
 }
 
 #dataManagementPanel {
@@ -243,7 +249,7 @@
 #filtersPanel::-webkit-scrollbar-track,
 #dataManagementPanel::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 #mainPanel::-webkit-scrollbar-thumb,
@@ -251,7 +257,7 @@
 #filtersPanel::-webkit-scrollbar-thumb,
 #dataManagementPanel::-webkit-scrollbar-thumb {
   background: var(--active-bg);
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 #mainPanel::-webkit-scrollbar-thumb:hover,
