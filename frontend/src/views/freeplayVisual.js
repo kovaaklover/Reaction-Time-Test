@@ -114,6 +114,7 @@ function setupReactionTest(sessionHistory) {
     let results = [];
     let readyToClick = false;
     let startTime = 0;
+    let starteda = false;
     // Canvas color handling
     function setColor(color) {
         ctx.fillStyle = color;
@@ -136,6 +137,7 @@ function setupReactionTest(sessionHistory) {
         results = [];
         currentTrial = 0;
         resultText.textContent = 'Get ready...';
+        starteda = true;
         runNextTrial();
     };
     // Stop button
@@ -146,6 +148,7 @@ function setupReactionTest(sessionHistory) {
         currentTrial = 0;
         results = [];
         resultText.textContent = 'Test stopped.';
+        starteda = false;
         setColor(initialColorSelect.value);
     };
     // Core trial logic
@@ -153,6 +156,7 @@ function setupReactionTest(sessionHistory) {
         const totalTrials = parseInt(trialsSelect.value);
         const notesInput = document.getElementById('notesInput');
         const notes = notesInput.value.trim();
+        readyToClick = false;
         if (currentTrial >= totalTrials) {
             const entry = {
                 timestamp: new Date().toLocaleString(),
@@ -174,12 +178,12 @@ function setupReactionTest(sessionHistory) {
         }
         currentTrial++;
         setColor(initialColorSelect.value);
-        readyToClick = false;
         resultText.textContent = `Trial ${currentTrial}/${totalTrials}`;
         const minDelay = parseFloat(minDelaySelect.value) * 1000;
         const maxDelay = parseFloat(maxDelaySelect.value) * 1000;
         const delay = Math.random() * (maxDelay - minDelay) + minDelay;
         setTimeout(() => {
+            if (!starteda) return;   // safety
             setColor(stimulusColorSelect.value);
             startTime = performance.now();
             readyToClick = true;
@@ -187,6 +191,7 @@ function setupReactionTest(sessionHistory) {
     }
     // Click handler
     canvas.addEventListener('pointerdown', () => {
+        if (!starteda) return;   // safety
         if (!readyToClick) {
             resultText.textContent = `Too early! Wait for ${stimulusColorSelect.options[stimulusColorSelect.selectedIndex].text.toLowerCase()}.`;
             return;

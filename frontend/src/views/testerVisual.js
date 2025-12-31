@@ -145,6 +145,7 @@ function setupReactionTest(sessionHistory) {
         const maxDelay = maxDelayS * 1000;
         const delay = Math.random() * (maxDelay - minDelay) + minDelay;
         setTimeout(() => {
+            if (!isRunning) return;   // safety
             setColor(currentColor);
             startTime = performance.now();
             readyToClick = true;
